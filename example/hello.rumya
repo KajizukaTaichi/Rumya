@@ -6,7 +6,7 @@ while let item = nameList[index] loop
 begin
     if let [name, count] = item then
     begin
-        let greeting = messageGen name.
+        greeting := messageGen name.
         print greeting * count
     end
     else
