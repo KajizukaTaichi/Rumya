@@ -6,7 +6,7 @@ begin
     if let [name, count] = item then
     begin
         let greeting = "Hello, " + name + "! ".
-        print greeting  * count
+        print greeting * count
     end.
     index += 1
 end.
