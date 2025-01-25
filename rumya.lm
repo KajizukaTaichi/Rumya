@@ -131,7 +131,7 @@ let betaReduct = fn(x, y, z ->
     let [from, to, ast] = [x, y, z];
     match (type ast) {
         #Let => {
-            @{ "class": #Let, "value": [ast.value[0], betaReduct from to ast.value[1]] }
+            @{ "class": #Let, "value": [ast.value[0], ast.value[1], betaReduct from to ast.value[2]] }
         },
         #Apply | #Block | #Print | #If | #For => {
             @{ "class": type ast, "value": map (betaReduct from to) ast.value }
