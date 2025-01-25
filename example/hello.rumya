@@ -1,12 +1,12 @@
 fun messageGen name = "Hello, " + name + "! ".
-let nameList = ["world", ["Rumya", 3]].
 let index: number = 0.
+nameList := ["world", ["Rumya", 3]].
 
 while let item = nameList[index] loop
 begin
     if let [name, count] = item then
     begin
-        greeting := messageGen name.
+        let greeting = messageGen name.
         print greeting * count
     end
     else
