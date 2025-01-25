@@ -5,4 +5,4 @@
 ```
 lamuta rumya.lm
 ```
-Lamuta言語(バージョン 0.4.3)がインストールされている必要があります
+[Lamuta言語](https://github.com/KajizukaTaichi/lamuta)のサブセットなので`0.4.3`以上のLamuta処理系がインストールされている必要があります
