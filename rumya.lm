@@ -119,7 +119,7 @@ let evalExpr = fn(e, x ->
                     if ([number, text] :: [type x]) @{ "class": #Value, "value": x } else x
                 } result;
             };
-            if (opr != `::`) {
+            if !([#Value, #Lambda] :: [type result]) {
                 result := @{ "class": #Value, "value": result }
             };
             [scope, result]
