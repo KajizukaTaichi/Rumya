@@ -40,8 +40,7 @@ let evalExpr = fn(e, x ->
                 let [scope, obj] = evalExpr scope accessor;
                 let [scope, key] = evalExpr scope name.value[2];
                 let updatedObj = modifyValue obj key val;
-                let [scope, _] = evalExpr scope @{ "class": #Let, "value": [accessor, null, updatedObj] }
-                [scope, val]
+                evalExpr scope @{ "class": #Let, "value": [accessor, null, updatedObj] }
             } else {
                 if (name != val) {
                     fault
@@ -446,11 +445,8 @@ let valueDisplay = fn(x ->
 
 let modifyValue = fn(x, y, z ->
     let [obj, key, val] = [x, y, z];
-    if obj[key] {
-        obj[key] := val;
-        obj
-    }
-    else fault
+    obj.value[key.value] := val;
+    obj
 );
 
 let scope = @{
@@ -475,7 +471,7 @@ if cmdLineArgs[0] {
                 print f"=> {it}\n"
             }
         } else {
-            print f"=> Fault: {ERRMSG}\n"
+            print f"=> Fault: {err}\n"
         };
         line += 1
     }
