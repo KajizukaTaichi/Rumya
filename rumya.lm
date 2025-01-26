@@ -35,6 +35,13 @@ let evalExpr = fn(e, x ->
                     let [scope, _] = evalExpr scope @{ "class": #Let, "value": [name, null, value] }
                 };
                 [scope, val]
+            } else if (type name == #Operator & (name.value[0] == `::`)) {
+                let accessor = name.value[1];
+                let [scope, obj] = evalExpr scope accessor;
+                let [scope, key] = evalExpr scope name.value[2];
+                let updatedObj = modifyValue obj key val;
+                let [scope, _] = evalExpr scope @{ "class": #Let, "value": [accessor, null, updatedObj] }
+                [scope, val]
             } else {
                 if (name != val) {
                     fault
@@ -435,6 +442,15 @@ let valueDisplay = fn(x ->
         },
         _ => ""
     }
+);
+
+let modifyValue = fn(x, y, z ->
+    let [obj, key, val] = [x, y, z];
+    if obj[key] {
+        obj[key] := val;
+        obj
+    }
+    else fault
 );
 
 let scope = @{
