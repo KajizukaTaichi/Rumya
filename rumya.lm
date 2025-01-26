@@ -2,7 +2,7 @@ load std;
 
 const SPACE: list = [" ", "　", "\n", "\t", "\r"];
 const QUOTE: list = ["\"", "\'", "\`"];
-const ERRMSG: text =  "the program is not able to parse or evaluate. check out is the program correct";
+const ERRMSG: text =  "the program is not able to parse or evaluate. check out is that correct";
 
 let evalExpr = fn(e, x ->
     let [scope, ast] = [e, x];
