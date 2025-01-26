@@ -20,7 +20,7 @@ let evalExpr = fn(e, x ->
             let [scope, val] = evalExpr scope ast.value[2];
 
             // Type check;
-            if (type val.value != annotate.value) {
+            if (annotate.value != null & (type val.value != annotate.value)) {
                 fault
             };
 
@@ -216,6 +216,7 @@ let parseStmt = fn(source ->
         let token = token - "obj" / "=";
         let [name, body] = [trim token[0], join token[1 ~ len(token)] "="];
         let classObj = @{ "class": #Obj, "value": [parseBlock body] };
+        let name = @{ "class": #Symbol, "value": name };
         @{ "class": #Let, "value": [name, null, classObj] }
     } else if (token["if"] == (0 ~ 2)) {
         let token = tokenize SPACE (token - "if");
