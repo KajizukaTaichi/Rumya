@@ -12,7 +12,7 @@ let evalExpr = fn(e, x ->
                 print valueDisplay val;
             };
             print "\n";
-            [scope, @{ "class": #Value, "value": null }]
+            [scope, @{ "class": #Literal, "value": null }]
         },
         #Let => {
             let name = ast.value[0];
@@ -52,20 +52,28 @@ let evalExpr = fn(e, x ->
                 [scope, val]
             }
         },
+        #Obj => {
+            let objScope = scope;
+            let [objScope, _] = evalExpr objScope ast.value[0];
+            for [key, _] in (scope as list) {
+                objScope -= key;
+            };
+            [scope, @{ "class": #Literal, "value": objScope }]
+        },
         #If => {
             if { let [scope, cond] = evalExpr scope ast.value[0] }
                 evalExpr scope ast.value[1]
             else if ast.value[2]
                 evalExpr scope it
             else
-                [scope, @{ "class": #Value, "value": null }]
+                [scope, @{ "class": #Literal, "value": null }]
         },
         #For => {
             let [counter, iter, body] = ast.value;
-            let result = @{ "class": #Value, "value": null };
+            let result = @{ "class": #Literal, "value": null };
             let [scope, iter] = evalExpr scope @{
                 "class": #Operator,
-                "value": [`as`, iter, @{ "class": #Value, "value": list } ]
+                "value": [`as`, iter, @{ "class": #Literal, "value": list } ]
             };
             for item in iter.value {
                 let [scope, _] = evalExpr scope @{ "class": #Let, "value": [counter, null, item] };
@@ -75,7 +83,7 @@ let evalExpr = fn(e, x ->
         },
         #While => {
             let [expr, body] = ast.value;
-            let result = @{ "class": #Value, "value": null };
+            let result = @{ "class": #Literal, "value": null };
             while (evalExpr scope expr) {
                 let scope = it[0];
                 let [scope, result] = evalExpr scope body;
@@ -84,14 +92,14 @@ let evalExpr = fn(e, x ->
         },
         #Until => {
             let [expr, body] = ast.value;
-            let result = @{ "class": #Value, "value": null };
+            let result = @{ "class": #Literal, "value": null };
             while !(evalExpr scope expr) {
                 let [scope, result] = evalExpr scope body;
             };
             [scope, result]
         },
         #Block => {
-            let result = @{ "class": #Value, "value": null };
+            let result = @{ "class": #Literal, "value": null };
             for i in ast.value {
                 [scope, result] := evalExpr(scope, i);
             };
@@ -106,7 +114,7 @@ let evalExpr = fn(e, x ->
                 [scope, val] := evalExpr(scope, i);
                 result += [val]
             };
-            [scope, @{ "class": #Value, "value": result }]
+            [scope, @{ "class": #Literal, "value": result }]
         },
         #Apply => {
             let [func, value] = ast.value;
@@ -130,11 +138,11 @@ let evalExpr = fn(e, x ->
             let result = opr a.value b.value;
             if (type result == list) {
                 let result = map \x.{
-                    if ([number, text] :: [type x]) @{ "class": #Value, "value": x } else x
+                    if ([number, text] :: [type x]) @{ "class": #Literal, "value": x } else x
                 } result;
             };
-            if !([#Value, #Lambda] :: [type result]) {
-                result := @{ "class": #Value, "value": result }
+            if !([#Literal, #Lambda] :: [type result]) {
+                result := @{ "class": #Literal, "value": result }
             };
             [scope, result]
         },
@@ -187,7 +195,7 @@ let parseStmt = fn(source ->
         @{ "class": #Print, "value": map parseBlock token }
     } else if (token["let"] == (0 ~ 3)) {
         let token = token - "let" / "=";
-        let [name, value] = [token[0], join token[1 ~ len(token)] "="];
+        let [name, value] = [trim token[0], join token[1 ~ len(token)] "="];
         if { let [name, annotate] = name / ":" } {
             @{ "class": #Let, "value": [parseExpr name, parseExpr annotate, parseExpr value]  }
         } else {
@@ -204,6 +212,11 @@ let parseStmt = fn(source ->
         };
         let name = @{ "class": #Symbol, "value": name };
         @{ "class": #Let, "value": [name, null, funcObj] }
+    } else if (token["obj"] == (0 ~ 3)) {
+        let token = token - "obj" / "=";
+        let [name, body] = [trim token[0], join token[1 ~ len(token)] "="];
+        let classObj = @{ "class": #Obj, "value": [parseBlock body] };
+        @{ "class": #Let, "value": [name, null, classObj] }
     } else if (token["if"] == (0 ~ 2)) {
         let token = tokenize SPACE (token - "if");
         @{
@@ -287,11 +300,11 @@ let parseExpr = fn(source ->
     let token = {
         // Number 64-bit float;
         if (token as number) {
-            @{ "class": #Value, "value": it };
+            @{ "class": #Literal, "value": it };
 
         // Type signature
         } else if (token as signature) {
-            @{ "class": #Value, "value": it };
+            @{ "class": #Literal, "value": it };
 
         // Expression that override other operator
         } else if (token[0] == "(" & (token[len token - 1] == ")")) {
@@ -313,7 +326,7 @@ let parseExpr = fn(source ->
 
         // Text that sequence of UTF-8 character
         } else if ((token[0] == "\"") & (token[len token - 1] == "\"")) {
-            @{ "class": #Value, "value": token[1 ~ (len token - 1)] };
+            @{ "class": #Literal, "value": token[1 ~ (len token - 1)] };
 
         // Symbol
         } else {
@@ -416,7 +429,7 @@ let tokenize = fn(x, y ->
 
 let valueShow = fn(x ->
     match type(x) {
-        #Value => {
+        #Literal => {
             let val = x.value;
             match (type val) {
                 list => {
@@ -433,7 +446,7 @@ let valueShow = fn(x ->
 
 let valueDisplay = fn(x ->
     match type(x) {
-        #Value => {
+        #Literal => {
             let val = x.value;
             match (type val) {
                 list => {
@@ -451,7 +464,7 @@ let valueDisplay = fn(x ->
 let scope = @{
     "input": fn(e, x ->
         let [scope, arg] = [e, x];
-        [scope, @{ "class": #Value, "value":  input arg.value }]
+        [scope, @{ "class": #Literal, "value":  input arg.value }]
     )
 };
 
