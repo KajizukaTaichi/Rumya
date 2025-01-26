@@ -39,7 +39,9 @@ let evalExpr = fn(e, x ->
                 let accessor = name.value[1];
                 let [scope, obj] = evalExpr scope accessor;
                 let [scope, key] = evalExpr scope name.value[2];
-                obj.value[key.value] := val;
+                obj.value[key.value] := {
+                    if ([text, list] :: [type obj.value]) val.value else val
+                };
                 evalExpr scope @{
                     "class": #Let,
                     "value": [accessor, null, obj]
