@@ -52,6 +52,14 @@ let evalExpr = fn(e, x ->
                 [scope, val]
             }
         },
+        #Class => {
+            let classScope = scope;
+            let [classScope, _] = evalExpr classScope ast.value[0];
+            for [key, _] in (scope as list) {
+                classScope -= key
+            };
+            [scope, @{ "class": #Value, "value": classScope }]
+        },
         #If => {
             if { let [scope, cond] = evalExpr scope ast.value[0] }
                 evalExpr scope ast.value[1]
@@ -203,6 +211,11 @@ let parseStmt = fn(source ->
         };
         let name = @{ "class": #Symbol, "value": name };
         @{ "class": #Let, "value": [name, null, funcObj] }
+    } else if (token["class"] == (0 ~ 5)) {
+        let token = token - "class" / "=";
+        let [name, body] = [token[0], join token[1 ~ len(token)] "="];
+        let classObj = @{ "class": #Class, "value": [parseBlock body] };
+        @{ "class": #Let, "value": [name, null, classObj] }
     } else if (token["if"] == (0 ~ 2)) {
         let token = tokenize SPACE (token - "if");
         @{
@@ -378,13 +391,13 @@ let tokenize = fn(x, y ->
             let quote = { if (quote == 1) 0 else 1 };
             current += char;
             index += 1;
-        } else if (["(", "["] :: [char]) {
+        } else if (["(", "[", "{"] :: [char]) {
             if (quote == 0) {
                 current += char;
                 nest += 1;
             };
             index += 1;
-        } else if ([")", "]"] :: [char]) {
+        } else if ([")", "]", "}"] :: [char]) {
             if (quote == 0) {
                 current += char;
                 nest -= 1;
