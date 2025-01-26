@@ -288,7 +288,7 @@ let parseExpr = fn(source ->
             token[1 ~ (len token - 1)] |> trim |> parseExpr;
 
         // Code block that includes plural statement
-        } else if (token[0 ~ 5] == "begin" & (token[(len token - 3) ~ (len token)] == "end")) {
+        } else if (token[0 ~ 5] == "begin" & (token[len token - 3 ~ (len token)] == "end")) {
             token[5 ~ (len token - 3)] |> trim |> parseBlock;
 
         // List that can handle many different typed value
