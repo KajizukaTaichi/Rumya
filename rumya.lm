@@ -468,7 +468,7 @@ if cmdLineArgs[0] {
                 print f"=> {it}\n"
             }
         } else {
-            print f"=> Fault: {err}\n"
+            print f"=> Fault: {ERRMSG}\n"
         };
         line += 1
     }
