@@ -161,9 +161,7 @@ let parseBlock = fn(source ->
     let [token, block] = [trim source, []];
     for line in (tokenize ["."] token) {
         let line = trim line;
-        if (line != "" & (line[0 ~ 2] != "//")) {
-            block += [parseStmt line]
-        }
+        block += [parseStmt line]
     };
     @{ "class": #Block, "value": block }
 );
