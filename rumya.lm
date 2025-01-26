@@ -2,7 +2,7 @@ load std;
 
 const SPACE: list = [" ", "　", "\n", "\t", "\r"];
 const QUOTE: list = ["\"", "\'", "\`"];
-const ERRMSG: text =  "the program is not able to parse. check out is the syntax correct";
+const ERRMSG: text =  "the program is not able to parse or evaluate. check out is the program correct";
 
 let evalExpr = fn(e, x ->
     let [scope, ast] = [e, x];
@@ -21,7 +21,7 @@ let evalExpr = fn(e, x ->
             let [scope, val] = evalExpr scope ast.value[2];
 
             if (type val.value != annotate.value) {
-                fault ERRMSG
+                fault
             };
 
             if (type name == #Symbol) {
@@ -29,7 +29,7 @@ let evalExpr = fn(e, x ->
                 [scope, val]
             } else if (type name == #List) {
                 if (len name.value != (len val.value)) {
-                    fault ERRMSG
+                    fault
                 };
                 for [name, value] in zip(name.value, val.value) {
                     let [scope, _] = evalExpr scope @{ "class": #Let, "value": [name, null, value] }
@@ -37,7 +37,7 @@ let evalExpr = fn(e, x ->
                 [scope, val]
             } else {
                 if (name != val) {
-                    fault ERRMSG
+                    fault
                 };
                 [scope, val]
             }
@@ -455,7 +455,7 @@ if cmdLineArgs[0] {
                 print f"=> {it}\n"
             }
         } else {
-            print f"=> Fault: {err}\n"
+            print f"=> Fault: {ERRMSG}\n"
         };
         line += 1
     }
