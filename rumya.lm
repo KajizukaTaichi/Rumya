@@ -207,7 +207,7 @@ let parseStmt = fn(source ->
         let token = token - "fun" / "=";
         let [name, body] = [token[0], join token[1 ~ len(token)] "="];
         let token = tokenize SPACE name;
-        let [name, args] = [token[0], reverse token[1 ~ len(token)]];
+        let [name, args] = [trim token[0], reverse token[1 ~ len(token)]];
         let funcObj = parseStmt body;
         for arg in args {
             let funcObj = @{ "class": #Lambda, "value": [arg, funcObj] };
@@ -216,7 +216,7 @@ let parseStmt = fn(source ->
         @{ "class": #Let, "value": [name, null, funcObj] }
     } else if (token["class"] == (0 ~ 5)) {
         let token = token - "class" / "=";
-        let [name, body] = [token[0], join token[1 ~ len(token)] "="];
+        let [name, body] = [trim token[0], join token[1 ~ len(token)] "="];
         let classObj = @{ "class": #Class, "value": [parseBlock body] };
         @{ "class": #Let, "value": [name, null, classObj] }
     } else if (token["if"] == (0 ~ 2)) {
