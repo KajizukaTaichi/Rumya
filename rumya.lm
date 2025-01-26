@@ -40,7 +40,10 @@ let evalExpr = fn(e, x ->
                 let [scope, obj] = evalExpr scope accessor;
                 let [scope, key] = evalExpr scope name.value[2];
                 obj.value[key.value] := val;
-                evalExpr scope @{ "class": #Let, "value": [accessor, null, obj] }
+                evalExpr scope @{
+                    "class": #Let,
+                    "value": [accessor, null, obj]
+                }
             } else {
                 if (name != val) {
                     fault
