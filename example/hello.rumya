@@ -2,7 +2,7 @@ fun messageGen name = "Hello, " + name + "! ".
 let index: number = 0.
 nameList := ["world", ["Rumya", 3]].
 
-while let item = nameList[index] loop
+while let item = nameList 's index loop
 begin
     if let [name, count] = item then
     begin
