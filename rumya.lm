@@ -374,7 +374,7 @@ let tokenize = fn(x, y ->
                 nest -= 1;
             };
             index += 3;
-        } else if  (QUOTE :: [char]) {
+        } else if  (char == "\"") {
             let quote = { if (quote == 1) 0 else 1 };
             current += char;
             index += 1;
