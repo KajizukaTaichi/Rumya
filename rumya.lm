@@ -6,6 +6,9 @@ const ERRMSG: text =  "the program is not able to parse or evaluate. check out i
 
 let evalExpr = fn(e, x ->
     let [scope, ast] = [e, x];
+    if scope[ast as text] {
+        ast := it
+    };
     match (type ast) {
         #Print => {
             for i in ast.value {
@@ -35,14 +38,19 @@ let evalExpr = fn(e, x ->
                     let [scope, _] = evalExpr scope @{ "class": #Let, "value": [name, null, value] }
                 };
                 [scope, val]
-            } else if (type name == #Operator & (name.value[0] == `::`)) {
-                let accessor = name.value[1];
-                let [scope, obj] = evalExpr scope accessor;
-                let [scope, key] = evalExpr scope name.value[2];
-                obj.value[key.value] := val;
-                evalExpr scope @{
-                    "class": #Let,
-                    "value": [accessor, null, obj]
+            } else if (type name == #Operator) {
+                if (name.value[0] == `::`) {
+                    let accessor = name.value[1];
+                    let [scope, obj] = evalExpr scope accessor;
+                    let [scope, key] = evalExpr scope name.value[2];
+                    obj.value[key.value] := val;
+                    evalExpr scope @{
+                        "class": #Let,
+                        "value": [accessor, null, obj]
+                    }
+                } else {
+                    scope[name as text] := val;
+                    [scope, val]
                 }
             } else {
                 if (name != val) {
