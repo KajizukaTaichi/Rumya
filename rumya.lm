@@ -126,7 +126,7 @@ let evalExpr = fn(e, x ->
                 [scope, evalExpr funcScope body :: 1]
             } else if (type func == #Value) {
                 let funcScope = scope;
-                evalExpr funcScope @{ "class": #Apply, [value, func] }
+                evalExpr funcScope @{ "class": #Apply, "value": [value, func] }
             } else if (type func == function) {
                 func scope value
             } else {
