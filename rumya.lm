@@ -106,7 +106,7 @@ let evalExpr = fn(e, x ->
                 let [[arg, body], funcScope] = [func.value, scope];
                 let body = betaReduct(arg, value, body);
                 [scope, evalExpr funcScope body :: 1]
-            } else {
+            } else if (type func == function) {
                 func scope value
             }
         },
