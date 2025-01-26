@@ -1,7 +1,6 @@
 load std;
 
 const SPACE: list = [" ", "　", "\n", "\t", "\r"];
-const QUOTE: list = ["\"", "\'", "\`"];
 const ERRMSG: text =  "the program is not able to parse or evaluate. check out is that correct";
 
 let evalExpr = fn(e, x ->
@@ -310,7 +309,7 @@ let parseExpr = fn(source ->
             @{ "class": #Operator, "value": [`::`, parseExpr token, parseExpr accessor] };
 
         // Text that sequence of UTF-8 character
-        } else if ((QUOTE :: [token :: 0]) & (QUOTE :: [token :: (len token - 1)])) {
+        } else if ((token[0] == "\"") & (token[len token - 1] == "\"")) {
             @{ "class": #Value, "value": token[1 ~ (len token - 1)] };
 
         // Symbol
@@ -323,28 +322,29 @@ let parseExpr = fn(source ->
         let operatorGen = λx.@{ "class": #Operator, "value": [x, hasLhs 2, token] };
         let assignGen = λx.@{ "class": #Let,  "value": [hasLhs 2, null, x] };
         match (trim it) {
-            "+"  => operatorGen `+`,
-            "-"  => operatorGen `-`,
-            "*"  => operatorGen `*`,
-            "/"  => operatorGen `/`,
-            "%"  => operatorGen `%`,
-            "^"  => operatorGen `^`,
-            "==" => operatorGen `==`,
-            "!=" => operatorGen `!=`,
-            ">"  => operatorGen `>`,
-            "<"  => operatorGen `<`,
-            ">=" => operatorGen `>=`,
-            "<=" => operatorGen `<=`,
-            "as" => operatorGen `as`,
-            "~"  => operatorGen `~`,
-            ":=" => assignGen token,
-            "=:" => @{ "class": #Let,  "value": [token, null, hasLhs 2] },
-            "+=" => operatorGen `+` |> assignGen,
-            "-=" => operatorGen `-` |> assignGen,
-            "*=" => operatorGen `*` |> assignGen,
-            "/=" => operatorGen `/` |> assignGen,
-            "|>" => @{ "class": #Apply,  "value": [token, hasLhs 2] },
-            _    => @{ "class": #Apply,  "value": [hasLhs 1, token] }
+            "+"   => operatorGen `+`,
+            "-"   => operatorGen `-`,
+            "*"   => operatorGen `*`,
+            "/"   => operatorGen `/`,
+            "%"   => operatorGen `%`,
+            "^"   => operatorGen `^`,
+            "=="  => operatorGen `==`,
+            "!="  => operatorGen `!=`,
+            ">"   => operatorGen `>`,
+            "<"   => operatorGen `<`,
+            ">="  => operatorGen `>=`,
+            "<="  => operatorGen `<=`,
+            "as"  => operatorGen `as`,
+            "~"   => operatorGen `~`,
+            ":="  => assignGen token,
+            "\'s" => operatorGen `::`,
+            "=:"  => @{ "class": #Let,  "value": [token, null, hasLhs 2] },
+            "+="  => operatorGen `+` |> assignGen,
+            "-="  => operatorGen `-` |> assignGen,
+            "*="  => operatorGen `*` |> assignGen,
+            "/="  => operatorGen `/` |> assignGen,
+            "|>"  => @{ "class": #Apply,  "value": [token, hasLhs 2] },
+            _     => @{ "class": #Apply,  "value": [hasLhs 1, token] }
         }
     } else {
         token
