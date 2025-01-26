@@ -20,6 +20,7 @@ let evalExpr = fn(e, x ->
             let annotate = ast.value[1];
             let [scope, val] = evalExpr scope ast.value[2];
 
+            // Type check;
             if (type val.value != annotate.value) {
                 fault
             };
