@@ -324,6 +324,7 @@ let parseExpr = fn(source ->
             "as" => operatorGen `as`,
             "~"  => operatorGen `~`,
             ":=" => assignGen token,
+            "=:" => @{ "class": #Let,  "value": [token, null, hasLhs 2] },
             "+=" => operatorGen `+` |> assignGen,
             "-=" => operatorGen `-` |> assignGen,
             "*=" => operatorGen `*` |> assignGen,
