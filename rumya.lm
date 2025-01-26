@@ -99,7 +99,9 @@ let evalExpr = fn(e, x ->
             [scope, @{ "class": #Value, "value": result }]
         },
         #Apply => {
-            let [[scope, func], [scope, value]] = map (evalExpr scope) ast.value;
+            let [func, value] = ast.value;
+            let [scope, func] = evalExpr scope func;
+            let [scope, value] = evalExpr scope value;
             if (type func == #Lambda) {
                 let [[arg, body], funcScope] = [func.value, scope];
                 let body = betaReduct(arg, value, body);
