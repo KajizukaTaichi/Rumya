@@ -52,14 +52,6 @@ let evalExpr = fn(e, x ->
                 [scope, val]
             }
         },
-        #Obj => {
-            let classScope = scope;
-            let [classScope, _] = evalExpr classScope ast.value[0];
-            for [key, _] in (scope as list) {
-                classScope -= key
-            };
-            [scope, @{ "class": #Value, "value": classScope }]
-        },
         #If => {
             if { let [scope, cond] = evalExpr scope ast.value[0] }
                 evalExpr scope ast.value[1]
@@ -125,9 +117,6 @@ let evalExpr = fn(e, x ->
                 let arg = @{ "class": #Symbol, "value": arg };
                 let body = betaReduct(arg, value, body);
                 [scope, evalExpr funcScope body :: 1]
-            } else if (type func == #Value) {
-                let funcScope = scope;
-                evalExpr funcScope @{ "class": #Apply, "value": [value, func] }
             } else if (type func == function) {
                 func scope value
             } else {
@@ -215,11 +204,6 @@ let parseStmt = fn(source ->
         };
         let name = @{ "class": #Symbol, "value": name };
         @{ "class": #Let, "value": [name, null, funcObj] }
-    } else if (token["obj"] == (0 ~ 5)) {
-        let token = token - "obj" / "=";
-        let [name, body] = [trim token[0], join token[1 ~ len(token)] "="];
-        let classObj = @{ "class": #Class, "value": [parseBlock body] };
-        @{ "class": #Let, "value": [name, null, classObj] }
     } else if (token["if"] == (0 ~ 2)) {
         let token = tokenize SPACE (token - "if");
         @{
