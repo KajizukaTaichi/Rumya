@@ -19,8 +19,8 @@ begin
         nameToShow 's "_" := " ".
 
         print "No.", index += 1, ": ", nameToShow, " is known as ", explain.
-        putsBorder 80.
-    end
+    end.
+    putsBorder 80.
 end.
 
 obj Explains =
