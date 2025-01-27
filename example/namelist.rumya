@@ -48,4 +48,8 @@ begin
         let identify = firstName + "_" + familyName.
         Explains 's identify := explainText
     end.
+    else if enter == "exit" then
+        flag := 0
+    else
+        print "Unknown command".
 end.
