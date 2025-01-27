@@ -1,20 +1,25 @@
+fun identGen firstName familyName = firstName + "_" + familyName.
+fun putsBorder length = print "-" * length.
+
 fun nameListViewer
     firstNameList familyNameList =
 begin
+    print "Name List Apps".
+    putsBorder 80.
+
     let index = 0.
     while let [firstName, familyName] =
         [firstNameList 's index, familyNameList 's index]
     loop
     begin
-        let identify = firstName + "_" + familyName.
+        let identify = identGen firstName familyName.
         let explain = Explains[identify].
 
         let nameToShow = identify.
         nameToShow 's "_" := " ".
 
-        print "Name List Apps".
         print "No.", index += 1, ": ", nameToShow, " is known as ", explain.
-        print "-" * 100
+        putsBorder 80.
     end
 end.
 
@@ -47,7 +52,7 @@ begin
         firstNameList += [firstName].
         familyNameList += [familyName].
 
-        let identify = firstName + "_" + familyName.
+        let identify = identGen firstName familyName.
         Explains 's identify := explainText
     end
     else if enter["exit"] then
