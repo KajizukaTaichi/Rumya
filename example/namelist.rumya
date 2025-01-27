@@ -30,7 +30,7 @@ let flag: num = 1.
 while flag == 1 loop
 begin
     nameListViewer firstNameList familyNameList.
-    let enter: str = input ">> ";
+    let enter: str = input ">> ".
     if enter == "add" then
     begin
         print "Please enter first name".
