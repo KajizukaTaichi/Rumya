@@ -1,0 +1,23 @@
+let firstNameList = ["Alice", "Bob"].
+let familyNameList = ["Margatroid", "Black"].
+
+obj Explains =
+begin
+    let Bob_Black = "Essaysist, author of The Abolition of Work in 1985".
+    let Alice_Margatroid = "Witch, character of Touhou project"
+end.
+
+let index = 0.
+while let [firstName, familyName] =
+    [firstNameList 's index, familyNameList 's index]
+loop
+begin
+    let identify = firstName + "_" + familyName.
+    let explain = Explains[identify].
+
+    let nameToShow = identify.
+    nameToShow 's "_" := " ".
+
+    print nameToShow, " is known as ", explain.
+    index += 1.
+end
