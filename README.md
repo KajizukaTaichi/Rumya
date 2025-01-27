@@ -1,7 +1,7 @@
 # Rumya
 難しいこと考えなくても すらすらコードが書ける プログラミング言語
 
-![image](https://github.com/user-attachments/assets/d78c1780-bebe-4eb5-925e-57a4c22b0721)
+![image](https://github.com/user-attachments/assets/9808efaa-0369-4670-b6d3-cead5d8d6916)
 
 ## 使い方
 ```
