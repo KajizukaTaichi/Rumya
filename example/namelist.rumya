@@ -1,5 +1,21 @@
-let firstNameList = ["Alice", "Bob"].
-let familyNameList = ["Margatroid", "Black"].
+fun nameListViewer
+    firstNameList familyNameList =
+begin
+    let index = 0.
+    while let [firstName, familyName] =
+        [firstNameList 's index, familyNameList 's index]
+    loop
+    begin
+        let identify = firstName + "_" + familyName.
+        let explain = Explains[identify].
+
+        let nameToShow = identify.
+        nameToShow 's "_" := " ".
+
+        print nameToShow, " is known as ", explain.
+        index += 1.
+    end
+end.
 
 obj Explains =
 begin
@@ -7,17 +23,29 @@ begin
     let Alice_Margatroid = "Witch, character of Touhou project"
 end.
 
-let index = 0.
-while let [firstName, familyName] =
-    [firstNameList 's index, familyNameList 's index]
-loop
+let firstNameList = ["Alice", "Bob"].
+let familyNameList = ["Margatroid", "Black"].
+
+let flag: num = 1.
+while flag == 1 loop
 begin
-    let identify = firstName + "_" + familyName.
-    let explain = Explains[identify].
+    nameListViewer firstNameList familyNameList.
+    let enter: str = input ">> ";
+    if enter == "add" then
+    begin
+        print "Please enter first name".
+        let firstName = input ">> ".
 
-    let nameToShow = identify.
-    nameToShow 's "_" := " ".
+        print "Please enter famlily name".
+        let familyName = input ">> ".
 
-    print nameToShow, " is known as ", explain.
-    index += 1.
-end
+        print "Please enter explain text".
+        let explainText = input ">> ".
+
+        firstNameList += [firstName].
+        familyNameList += [familyName].
+
+        let identify = firstName + "_" + familyName.
+        Explains 's identify := explainText
+    end.
+end.
