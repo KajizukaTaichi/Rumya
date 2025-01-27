@@ -1,5 +1,5 @@
 fun messageGen name = "Hello, " + name + "! ".
-let index: number = 0.
+let index: num = 0.
 nameList := ["world", ["Rumya", 3]].
 
 while let item = nameList 's index loop
