@@ -31,6 +31,7 @@ while flag == 1 loop
 begin
     nameListViewer firstNameList familyNameList.
     let enter: str = input ">> ".
+
     if enter["append"] then
     begin
         print "Please enter first name".
@@ -48,7 +49,7 @@ begin
         let identify = firstName + "_" + familyName.
         Explains 's identify := explainText
     end
-    else if enter == "exit" then
+    else if enter["exit"] then
         flag := 0
     else
         print "Unknown command".
