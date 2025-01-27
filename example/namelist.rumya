@@ -12,8 +12,9 @@ begin
         let nameToShow = identify.
         nameToShow 's "_" := " ".
 
-        print nameToShow, " is known as ", explain.
-        index += 1.
+        print "Name List Apps".
+        print "No.", index += 1, ": ", nameToShow, " is known as ", explain.
+        print "-" * 100
     end
 end.
 
