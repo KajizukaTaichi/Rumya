@@ -304,7 +304,7 @@ let parseExpr = fn(source ->
             @{ "class": #Literal, "value": it };
 
         // Type signature
-        } else if (token as signature) {
+        } else if (parseSig token) {
             @{ "class": #Literal, "value": it };
 
         // Expression that override other operator
@@ -365,6 +365,15 @@ let parseExpr = fn(source ->
         }
     } else {
         token
+    }
+);
+
+let parseSig = fn(x ->
+    let source = x;
+    match source {
+        "str" => text,
+        "num" => number,
+        "list" => list
     }
 );
 
@@ -439,6 +448,13 @@ let valueShow = fn(x ->
                 },
                 text => f"\"{val}\"",
                 struct => "",
+                signature => {
+                    match source {
+                        text => "str",
+                        number => "num",
+                        list => "list"
+                    }
+                },
                 _ => val
             }
         },
@@ -457,6 +473,13 @@ let valueDisplay = fn(x ->
                 },
                 text => val,
                 struct => "",
+                signature => {
+                    match source {
+                        text => "str",
+                        number => "num",
+                        list => "list"
+                    }
+                },
                 _ => val
             }
         },
@@ -472,7 +495,9 @@ let scope = @{
 };
 
 if cmdLineArgs[0] {
-    evalExpr(scope, parseBlock (readFile it))
+    if evalExpr(scope, parseBlock (readFile it)) it else {
+        print f"Fault: {ERRMSG}\n"
+    }
 } else {
     print "Rumya 0.1.0\n";
     let line =  1;
