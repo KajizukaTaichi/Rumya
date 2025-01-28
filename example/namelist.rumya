@@ -1,5 +1,7 @@
-fun identGen firstName familyName = firstName + "_" + familyName.
-fun putsBorder length = print "-" * length.
+fun identGen firstName familyName =
+    firstName + "_" + familyName.
+fun putsBorder length =
+    print "-" * length.
 
 fun nameListViewer
     firstNameList familyNameList =
