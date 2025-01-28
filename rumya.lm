@@ -437,16 +437,19 @@ let tokenize = fn(x, y ->
     tokens
 );
 
-let valueShow = fn(x ->
+let valueShow = fn(isForDebug, x ->
     match type(x) {
         #Literal => {
             let val = x.value;
             match (type val) {
                 list => {
-                    let inner = join (map valueShow val) ", ";
+                    let inner = join (map (valueShow isForDebug) val) ", ";
                     f"[{inner}]"
                 },
-                text => f"\"{val}\"",
+                text => {
+                    if (isForDebug == 1) f"\"{val}\""
+                    else val
+                },
                 struct => "",
                 signature => {
                     match source {
@@ -455,31 +458,7 @@ let valueShow = fn(x ->
                         list => "list"
                     }
                 },
-                _ => val
-            }
-        },
-        _ => ""
-    }
-);
-
-let valueDisplay = fn(x ->
-    match type(x) {
-        #Literal => {
-            let val = x.value;
-            match (type val) {
-                list => {
-                    let inner = join (map valueShow val) ", ";
-                    f"[{inner}]"
-                },
-                text => val,
-                struct => "",
-                signature => {
-                    match source {
-                        text => "str",
-                        number => "num",
-                        list => "list"
-                    }
-                },
+                null => "",
                 _ => val
             }
         },
@@ -510,7 +489,7 @@ if cmdLineArgs[0] {
                 print f"=> {it}\n"
             }
         } else {
-            print f"=> Fault: {ERRMSG}\n"
+            print f"Fault: {ERRMSG}\n"
         };
         line += 1
     }
