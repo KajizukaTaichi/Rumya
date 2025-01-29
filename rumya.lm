@@ -52,11 +52,10 @@ let evalExpr = fn(e, x ->
                     };
                     [scope, val]
                 } else if (type name == #Dict) {
-                    if (len (name.value as list) != len(val.value as list)) {
-                        fault
-                    };
                     for [key, name] in (name.value as list) {
-                        let [scope, _] = evalExpr scope @{ "class": #Let, "value": [name, null, val[key]] }
+                        print name, key, val;
+                        let [scope, _] = evalExpr scope
+                            @{ "class": #Let, "value": [name, null, val.value[key]] }
                     };
                     [scope, val]
                 } else if (type name == #Operator & (name.value[0] == `::`)) {
