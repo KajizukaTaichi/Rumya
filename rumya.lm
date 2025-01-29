@@ -125,6 +125,14 @@ let evalExpr = fn(e, x ->
             };
             [scope, @{ "class": #Literal, "value": result }]
         },
+        #Dict => {
+            let result = @{};
+            for [key, value] in ast.value {
+                [scope, val] := evalExpr(scope, value);
+                result[key] := [val]
+            };
+            [scope, @{ "class": #Literal, "value": result }]
+        },
         #Call => {
             let [func, value] = ast.value;
             let [scope, func] = evalExpr scope func;
@@ -299,6 +307,10 @@ let parseExpr = fn(source ->
         } else if (parseSig token) {
             @{ "class": #Literal, "value": it };
 
+        // String that sequence of UTF-8 character
+        } else if ((token[0] == "\"") & (token[len token - 1] == "\"")) {
+            @{ "class": #Literal, "value": token[1 ~ (len token - 1)] };
+
         // Expression that override other operator
         } else if (token[0] == "(" & (token[len token - 1] == ")")) {
             token[1 ~ (len token - 1)] |> trim |> parseExpr;
@@ -323,17 +335,27 @@ let parseExpr = fn(source ->
                 }
             };
 
+        // Dictionary that can handle several values by key
+        } else if (token[0] == "{" & (token[len token - 1] == "}")) {
+            @{
+                "class": #Dict,
+                "value": {
+                    let result = @{};
+                    for i in (tokenize [","] token[1 ~ (len token - 1)]) {
+                        let [key, value] = tokenize [":"] i;
+                        result[trim key] := parseExpr value;
+                    };
+                    result
+                }
+            };
+
         // Access list value by index specification
         } else if (token["["] & (token[len token - 1] == "]")) {
             let token = token[0 ~ (len token - 1)] / "[";
             let [token, accessor] = [join token[0 ~ (len token - 1)] "[", token[len token - 1]];
             @{ "class": #Operator, "value": [`::`, parseExpr token, parseExpr accessor] };
 
-        // Text that sequence of UTF-8 character
-        } else if ((token[0] == "\"") & (token[len token - 1] == "\"")) {
-            @{ "class": #Literal, "value": token[1 ~ (len token - 1)] };
-
-        // Symbol
+        // Symbol that used in variable reference
         } else {
            @{ "class": #Symbol, "value": token }
         }
@@ -379,7 +401,8 @@ let parseSig = fn(x ->
         "num" => number,
         "arr" => list,
         "fun" => function,
-        "sig" => signature
+        "sig" => signature,
+        "dic" => struct
     }
 );
 
@@ -462,7 +485,8 @@ let valueShow = fn(isForDebug, x ->
                         number => "num",
                         list => "arr",
                         function => "fun",
-                        signature => "sig"
+                        signature => "sig",
+                        struct => "dic"
                     }
                 },
                 struct | symbol => "",
