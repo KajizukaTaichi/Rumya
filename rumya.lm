@@ -56,7 +56,15 @@ let evalExpr = fn(e, x ->
                     let [scope, obj] = evalExpr scope accessor;
                     let [scope, key] = evalExpr scope name.value[2];
                     obj.value[key.value] := {
-                        if ([text, list] :: [type key.value]) val.value else val
+                        if (type obj.value != struct) {
+                            if ([text, list] :: [type key.value]) {
+                                val.value
+                            } else {
+                                val
+                            }
+                        } else {
+                            val
+                        }
                     };
                     evalExpr scope @{
                         "class": #Let,
@@ -489,7 +497,14 @@ let valueShow = fn(isForDebug, x ->
                         struct => "dic"
                     }
                 },
-                struct | symbol => "",
+                struct => {
+                    let inner = map \x.{
+                        f"{x[0]}: {valueShow isForDebug x[1]}"
+                    } (val as list);
+                    let inner = join inner ", ";
+                    f"\{ {inner} \}"
+                },
+                symbol => "",
                 _ => val
             }
         },
