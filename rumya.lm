@@ -32,9 +32,12 @@ let evalExpr = fn(e, x ->
                 }
             } else {
                 let [scope, val] = evalExpr scope val;
-                // Type check;
-                if (annotate.value != null & (type val.value != annotate.value)) {
-                    fault
+                if (annotate != null) {
+                    // Type check;
+                    let [scope, typeOfVal] = scope.type scope val;
+                    if (typeOfVal.value != annotate) {
+                        fault
+                    }
                 };
 
                 if (type name == #Symbol) {
