@@ -120,16 +120,16 @@ let evalExpr = fn(e, x ->
         #Array => {
             let result = [];
             for i in ast.value {
-                [scope, val] := evalExpr(scope, i);
+                let [scope, val] = evalExpr scope i;
                 result += [val]
             };
             [scope, @{ "class": #Literal, "value": result }]
         },
         #Dict => {
             let result = @{};
-            for [key, value] in ast.value {
-                [scope, val] := evalExpr(scope, value);
-                result[key] := [val]
+            for [key, value] in (ast.value as list) {
+                let [scope, val] = evalExpr scope value;
+                result[key] := val
             };
             [scope, @{ "class": #Literal, "value": result }]
         },
@@ -342,8 +342,8 @@ let parseExpr = fn(source ->
                 "value": {
                     let result = @{};
                     for i in (tokenize [","] token[1 ~ (len token - 1)]) {
-                        let [key, value] = tokenize [":"] i;
-                        result[trim key] := parseExpr value;
+                        let [key, value] = tokenize [":"] (trim i);
+                        result[trim key] := parseExpr(value);
                     };
                     result
                 }
