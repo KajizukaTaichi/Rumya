@@ -327,7 +327,7 @@ let parseExpr = fn(source ->
         } else if (token[0] == "[" & (token[len token - 1] == "]")) {
             @{
                 "class": #Array,
-                "value": {;
+                "value": {
                     if (tokenize [","] token[1 ~ (len token - 1)]) {
                         let result = [];
                         for i in it {
@@ -346,12 +346,14 @@ let parseExpr = fn(source ->
             @{
                 "class": #Dict,
                 "value": {
-                    let result = @{};
-                    for i in (tokenize [","] token[1 ~ (len token - 1)]) {
-                        let [key, value] = tokenize [":"] (trim i);
-                        result[trim key] := parseExpr(value);
-                    };
-                    result
+                    if (tokenize [","] token[1 ~ (len token - 1)]) {
+                        let result = @{};
+                        for i in it {
+                            let [key, value] = tokenize [":"] (trim i);
+                            result[trim key] := parseExpr(value);
+                        };
+                        result
+                    } else []
                 }
             };
 
