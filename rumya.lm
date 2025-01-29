@@ -57,11 +57,7 @@ let evalExpr = fn(e, x ->
                     let [scope, key] = evalExpr scope name.value[2];
                     obj.value[key.value] := {
                         if (type obj.value != struct) {
-                            if ([text, list] :: [type key.value]) {
-                                val.value
-                            } else {
-                                val
-                            }
+                            if ([text, list] :: [type key.value]) { val.value } else { val }
                         } else {
                             val
                         }
