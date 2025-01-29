@@ -522,7 +522,8 @@ let scope = @{
         [scope, @{ "class": #Literal, "value": {
             match (type arg) {
                 #Literal => type arg.value,
-                #Lambda => function
+                #Lambda => function,
+                _ => type arg
             }
         }}]
     )
