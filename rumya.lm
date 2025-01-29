@@ -51,6 +51,14 @@ let evalExpr = fn(e, x ->
                         let [scope, _] = evalExpr scope @{ "class": #Let, "value": [name, null, value] }
                     };
                     [scope, val]
+                } else if (type name == #Dict) {
+                    if (len (name.value as list) != len(val.value as list)) {
+                        fault
+                    };
+                    for [key, name] in (name.value as list) {
+                        let [scope, _] = evalExpr scope @{ "class": #Let, "value": [name, null, val[key]] }
+                    };
+                    [scope, val]
                 } else if (type name == #Operator & (name.value[0] == `::`)) {
                     let accessor = name.value[1];
                     let [scope, obj] = evalExpr scope accessor;
