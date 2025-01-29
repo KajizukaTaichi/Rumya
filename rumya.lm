@@ -15,52 +15,55 @@ let evalExpr = fn(e, x ->
             [scope, @{ "class": #Literal, "value": null }]
         },
         #Let => {
-            let name = ast.value[0];
-            let annotate = ast.value[1];
-            let [scope, val] = evalExpr scope ast.value[2];
-
-            // Type check;
-            if (annotate.value != null & (type val.value != annotate.value)) {
-                fault
-            };
-
-            if (type name == #Symbol) {
-                scope[name.value] := val;
-                [scope, val]
-            } else if (type name == #Array) {
-                if (len name.value != (len val.value)) {
-                    fault
+            let [name, annotate, val] = ast.value;
+            if (type name == #Call) {
+                let [name, args] = name.value;
+                let val = @{
+                    "class": #Lambda,
+                    "value": [args.value, val]
                 };
-                for [name, value] in zip(name.value, val.value) {
-                    let [scope, _] = evalExpr scope @{ "class": #Let, "value": [name, null, value] }
-                };
-                [scope, val]
-            } else if (type name == #Call) {
-                let accessor = name.value[1];
-                let [scope, obj] = evalExpr scope accessor;
-                let [scope, key] = evalExpr scope name.value[2];
-                obj.value[key.value] := {
-                    if ([text, list] :: [type key.value]) val.value else val
+                while (type name == #Call) {
+                    let [name, args] = name.value;
+                    let val = @{ "class": #Lambda, "value": [args.value, val] };
                 };
                 evalExpr scope @{
                     "class": #Let,
-                    "value": [accessor, null, obj]
-                }
-            } else if (type name == #Operator & (name.value[0] == `::`)) {
-                let accessor = name.value[1];
-                let [scope, obj] = evalExpr scope accessor;
-                let [scope, key] = evalExpr scope name.value[2];
-                obj.value[key.value] := {
-                    if ([text, list] :: [type key.value]) val.value else val
-                };
-                evalExpr scope @{
-                    "class": #Let,
-                    "value": [accessor, null, obj]
+                    "value": [name, null, val]
                 }
             } else {
-                let [scope, name] = evalExpr scope name;
-                if (name != val) { fault };
-                [scope, val]
+                let [scope, val] = evalExpr scope val;
+                // Type check;
+                if (annotate.value != null & (type val.value != annotate.value)) {
+                    fault
+                };
+
+                if (type name == #Symbol) {
+                    scope[name.value] := val;
+                    [scope, val]
+                } else if (type name == #Array) {
+                    if (len name.value != (len val.value)) {
+                        fault
+                    };
+                    for [name, value] in zip(name.value, val.value) {
+                        let [scope, _] = evalExpr scope @{ "class": #Let, "value": [name, null, value] }
+                    };
+                    [scope, val]
+                } else if (type name == #Operator & (name.value[0] == `::`)) {
+                    let accessor = name.value[1];
+                    let [scope, obj] = evalExpr scope accessor;
+                    let [scope, key] = evalExpr scope name.value[2];
+                    obj.value[key.value] := {
+                        if ([text, list] :: [type key.value]) val.value else val
+                    };
+                    evalExpr scope @{
+                        "class": #Let,
+                        "value": [accessor, null, obj]
+                    }
+                } else {
+                    let [scope, name] = evalExpr scope name;
+                    if (name != val) { fault };
+                    [scope, val]
+                }
             }
         },
         #Object => {
@@ -208,21 +211,10 @@ let parseStmt = fn(source ->
         let token = token - "let" / "=";
         let [name, value] = [trim token[0], join token[1 ~ len(token)] "="];
         if { let [name, annotate] = name / ":" } {
-            @{ "class": #Let, "value": [parseExpr name, parseExpr annotate, parseBlock value]  }
+            @{ "class": #Let, "value": [parseExpr name, parseExpr annotate, parseBlock value] }
         } else {
-            @{ "class": #Let, "value": [parseExpr name, null, parseBlock value]  }
+            @{ "class": #Let, "value": [parseExpr name, null, parseBlock value] }
         }
-    } else if (token["fun"] == (0 ~ 3)) {
-        let token = token - "fun" / "=";
-        let [name, body] = [token[0], join token[1 ~ len(token)] "="];
-        let token = tokenize SPACE name;
-        let [name, args] = [trim token[0], reverse token[1 ~ len(token)]];
-        let funcObj = parseStmt body;
-        for arg in args {
-            let funcObj = @{ "class": #Lambda, "value": [arg, funcObj] };
-        };
-        let name = @{ "class": #Symbol, "value": name };
-        @{ "class": #Let, "value": [name, null, funcObj] }
     } else if (token["obj"] == (0 ~ 3)) {
         let token = token - "obj" / "=";
         let [name, body] = [trim token[0], join token[1 ~ len(token)] "="];
