@@ -367,8 +367,14 @@ let parseExpr = fn(source ->
                     if (tokenize [","] token[1 ~ (len token - 1)]) {
                         let result = @{};
                         for i in it {
-                            let [key, value] = tokenize [":"] (trim i);
-                            result[trim key] := parseExpr(value);
+                            let trimmed = trim i;
+                            if ("" != trimmed) {
+                                if { let [key, value] = tokenize [":"] trimmed } {
+                                    result[trimmed] := parseExpr(value);
+                                } else {
+                                    result[trimmed] := parseExpr(trimmed);
+                                }
+                            }
                         };
                         result
                     } else []
