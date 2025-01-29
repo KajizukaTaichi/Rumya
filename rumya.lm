@@ -327,15 +327,17 @@ let parseExpr = fn(source ->
         } else if (token[0] == "[" & (token[len token - 1] == "]")) {
             @{
                 "class": #Array,
-                "value": {
-                    let result = [];
-                    for i in (tokenize [","] token[1 ~ (len token - 1)]) {
-                        let trimmed = trim i;
-                        if ("" != trimmed) {
-                            result += [parseExpr it]
-                        }
-                    };
-                    result
+                "value": {;
+                    if (tokenize [","] token[1 ~ (len token - 1)]) {
+                        let result = [];
+                        for i in it {
+                            let trimmed = trim i;
+                            if ("" != trimmed) {
+                                result += [parseExpr it]
+                            }
+                        };
+                        result
+                    } else []
                 }
             };
 
