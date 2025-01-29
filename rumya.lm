@@ -53,7 +53,6 @@ let evalExpr = fn(e, x ->
                     [scope, val]
                 } else if (type name == #Dict) {
                     for [key, name] in (name.value as list) {
-                        print name, key, val;
                         let [scope, _] = evalExpr scope
                             @{ "class": #Let, "value": [name, null, val.value[key]] }
                     };
