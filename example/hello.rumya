@@ -1,13 +1,16 @@
 let messageGen name = "Hello, " + name + "! ".
 let index: num = 0.
-nameList := ["world", ["Rumya", 3]].
+nameList := ["world", { name: "Rumya", repeat: 3 }].
 
 while let item = nameList 's index loop
 begin
-    if let [name, count] = item then
+    if let [
+        ["name", name],
+        ["repeat", repeat]
+    ] = item as arr then
     begin
         messageGen name =: greeting.
-        print greeting * count
+        print greeting * repeat
     end
     else
         print messageGen item.
