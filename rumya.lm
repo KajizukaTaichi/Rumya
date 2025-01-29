@@ -157,15 +157,7 @@ let evalExpr = fn(e, x ->
             let [scope, a] = evalExpr scope a;
             let [scope, b] = evalExpr scope b;
             let result = opr a.value b.value;
-            if (type result == list) {
-                let result = map \x.{
-                    if ([number, text] :: [type x]) @{ "class": #Literal, "value": x } else x
-                } result;
-            };
-            if !([#Literal, #Lambda] :: [type result]) {
-                result := @{ "class": #Literal, "value": result }
-            };
-            [scope, result]
+            [scope, prepare result]
         },
         _ => [scope, ast]
     }
@@ -198,6 +190,23 @@ let betaReduct = fn(x, y, z ->
         },
         _ => ast
     }
+);
+
+let prepare = fn(x ->
+    let result = x;
+    if (type result == list) {
+        let result = map prepare result
+    } else if (type result == struct) {
+        let newResult = @{};
+        for [k, v] in (result as list) {
+            newResult[k] := prepare v
+        };
+        let result = newResult;
+    };
+    if !([#Literal, #Lambda] :: [type result]) {
+        result := @{ "class": #Literal, "value": result }
+    };
+    result
 );
 
 let parseBlock = fn(source ->
