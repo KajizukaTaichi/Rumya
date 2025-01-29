@@ -451,7 +451,7 @@ let valueShow = fn(isForDebug, x ->
                     else val
                 },
                 signature => {
-                    match source {
+                    match val {
                         text => "str",
                         number => "num",
                         list => "list"
@@ -472,7 +472,7 @@ let scope = @{
     ),
     "type": fn(e, x ->
         let [scope, arg] = [e, x];
-        [scope, @{ "class": #Literal, "value":  type arg.value }]
+        [scope, @{ "class": #Literal, "value": type arg.value }]
     )
 };
 
