@@ -1,4 +1,4 @@
-fun messageGen name = "Hello, " + name + "! ".
+let messageGen name = "Hello, " + name + "! ".
 let index: num = 0.
 nameList := ["world", ["Rumya", 3]].
 
