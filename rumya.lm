@@ -309,7 +309,19 @@ let parseExpr = fn(source ->
 
         // List that can handle many different typed value
         } else if (token[0] == "[" & (token[len token - 1] == "]")) {
-            @{ "class": #Array, "value": map parseExpr (tokenize [","] token[1 ~ (len token - 1)]) };
+            @{
+                "class": #Array,
+                "value": {
+                    let result = [];
+                    for i in (tokenize [","] token[1 ~ (len token - 1)]) {
+                        let trimmed = trim i;
+                        if ("" != trimmed) {
+                            result += [parseExpr it]
+                        }
+                    };
+                    result
+                }
+            };
 
         // Access list value by index specification
         } else if (token["["] & (token[len token - 1] == "]")) {
