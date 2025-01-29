@@ -1,11 +1,11 @@
 let messageGen name = "Hello, " + name + "! ".
-nameList := ["world", { name: "Rumya", repeat: 3 }].
+nameList := [{ name: "world", repeat: 2 }, { name: "Rumya", repeat: 3 }].
 
 let index: num = 0.
-while let item = nameList 's index loop
+while let elm = nameList 's index loop
 begin
-    print if { name: greeting, repeat: count } := item
-        then greeting * count |> messageGen
-        else messageGen item.
+    print if elm =: { name: "Rumya, repeat: count }
+        then messageGen greeting * count
+        else item |> messageGen.
     index += 1
 end.
