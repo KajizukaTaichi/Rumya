@@ -4,12 +4,8 @@ nameList := ["world", { name: "Rumya", repeat: 3 }].
 let index: num = 0.
 while let item = nameList 's index loop
 begin
-    if { name: greeting, repeat: count } := item then
-    begin
-        messageGen name =: greeting.
-        print greeting * count
-    end
-    else
-        print messageGen item.
+    print if { name: greeting, repeat: count } := item
+        then messageGen greeting * count
+        else messageGen item.
     index += 1
 end.
