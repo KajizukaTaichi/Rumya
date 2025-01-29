@@ -313,7 +313,10 @@ let parseExpr = fn(source ->
 
         // String that sequence of UTF-8 character
         } else if ((token[0] == "\"") & (token[len token - 1] == "\"")) {
-            @{ "class": #Literal, "value": token[1 ~ (len token - 1)] };
+            @{
+                "class": #Literal,
+                "value": { if token[1 ~ (len token - 1)] it else "" }
+            };
 
         // Expression that override other operator
         } else if (token[0] == "(" & (token[len token - 1] == ")")) {
@@ -321,7 +324,7 @@ let parseExpr = fn(source ->
 
         // Code block that includes plural statement
         } else if (token[0 ~ 5] == "begin" & (token[len token - 3 ~ (len token)] == "end")) {
-            token[5 ~ (len token - 3)] |> trim |> parseBlock;
+            { if token[5 ~ (len token - 3)] it else "" } |> trim |> parseBlock;
 
         // List that can handle many different typed value
         } else if (token[0] == "[" & (token[len token - 1] == "]")) {
