@@ -66,14 +66,6 @@ let evalExpr = fn(e, x ->
                 }
             }
         },
-        #Object => {
-            let objScope = scope;
-            let [objScope, _] = evalExpr objScope ast.value[0];
-            for [key, _] in (scope as list) {
-                objScope -= key;
-            };
-            [scope, @{ "class": #Literal, "value": objScope }]
-        },
         #If => {
             if { let [scope, cond] = evalExpr scope ast.value[0] }
                 evalExpr scope ast.value[1]
@@ -215,12 +207,6 @@ let parseStmt = fn(source ->
         } else {
             @{ "class": #Let, "value": [parseExpr name, null, parseBlock value] }
         }
-    } else if (token["obj"] == (0 ~ 3)) {
-        let token = token - "obj" / "=";
-        let [name, body] = [trim token[0], join token[1 ~ len(token)] "="];
-        let classObj = @{ "class": #Object, "value": [parseBlock body] };
-        let name = @{ "class": #Symbol, "value": name };
-        @{ "class": #Let, "value": [name, null, classObj] }
     } else if (token["if"] == (0 ~ 2)) {
         let token = tokenize SPACE (token - "if");
         @{
