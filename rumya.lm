@@ -27,7 +27,7 @@ let evalExpr = fn(e, x ->
             if (type name == #Symbol) {
                 scope[name.value] := val;
                 [scope, val]
-            } else if (type name == #List) {
+            } else if (type name == #Array) {
                 if (len name.value != (len val.value)) {
                     fault
                 };
@@ -35,6 +35,17 @@ let evalExpr = fn(e, x ->
                     let [scope, _] = evalExpr scope @{ "class": #Let, "value": [name, null, value] }
                 };
                 [scope, val]
+            } else if (type name == #Call) {
+                let accessor = name.value[1];
+                let [scope, obj] = evalExpr scope accessor;
+                let [scope, key] = evalExpr scope name.value[2];
+                obj.value[key.value] := {
+                    if ([text, list] :: [type key.value]) val.value else val
+                };
+                evalExpr scope @{
+                    "class": #Let,
+                    "value": [accessor, null, obj]
+                }
             } else if (type name == #Operator & (name.value[0] == `::`)) {
                 let accessor = name.value[1];
                 let [scope, obj] = evalExpr scope accessor;
@@ -52,7 +63,7 @@ let evalExpr = fn(e, x ->
                 [scope, val]
             }
         },
-        #Obj => {
+        #Object => {
             let objScope = scope;
             let [objScope, _] = evalExpr objScope ast.value[0];
             for [key, _] in (scope as list) {
@@ -108,7 +119,7 @@ let evalExpr = fn(e, x ->
         #Symbol => {
             [scope, scope[ast.value]]
         },
-        #List => {
+        #Array => {
             let result = [];
             for i in ast.value {
                 [scope, val] := evalExpr(scope, i);
@@ -116,7 +127,7 @@ let evalExpr = fn(e, x ->
             };
             [scope, @{ "class": #Literal, "value": result }]
         },
-        #Apply => {
+        #Call => {
             let [func, value] = ast.value;
             let [scope, func] = evalExpr scope func;
             let [scope, value] = evalExpr scope value;
@@ -157,7 +168,7 @@ let betaReduct = fn(x, y, z ->
         #Let => {
             @{ "class": #Let, "value": [ast.value[0], ast.value[1], betaReduct from to ast.value[2]] }
         },
-        #Apply | #Block | #Print | #If | #For => {
+        #Call | #Block | #Print | #If | #For => {
             @{ "class": type ast, "value": map (betaReduct from to) ast.value }
         },
         #Operator => {
@@ -197,9 +208,9 @@ let parseStmt = fn(source ->
         let token = token - "let" / "=";
         let [name, value] = [trim token[0], join token[1 ~ len(token)] "="];
         if { let [name, annotate] = name / ":" } {
-            @{ "class": #Let, "value": [parseExpr name, parseExpr annotate, parseExpr value]  }
+            @{ "class": #Let, "value": [parseExpr name, parseExpr annotate, parseBlock value]  }
         } else {
-            @{ "class": #Let, "value": [parseExpr name, null, parseExpr value]  }
+            @{ "class": #Let, "value": [parseExpr name, null, parseBlock value]  }
         }
     } else if (token["fun"] == (0 ~ 3)) {
         let token = token - "fun" / "=";
@@ -215,7 +226,7 @@ let parseStmt = fn(source ->
     } else if (token["obj"] == (0 ~ 3)) {
         let token = token - "obj" / "=";
         let [name, body] = [trim token[0], join token[1 ~ len(token)] "="];
-        let classObj = @{ "class": #Obj, "value": [parseBlock body] };
+        let classObj = @{ "class": #Object, "value": [parseBlock body] };
         let name = @{ "class": #Symbol, "value": name };
         @{ "class": #Let, "value": [name, null, classObj] }
     } else if (token["if"] == (0 ~ 2)) {
@@ -317,7 +328,7 @@ let parseExpr = fn(source ->
 
         // List that can handle many different typed value
         } else if (token[0] == "[" & (token[len token - 1] == "]")) {
-            @{ "class": #List, "value": map parseExpr (tokenize [","] token[1 ~ (len token - 1)]) };
+            @{ "class": #Array, "value": map parseExpr (tokenize [","] token[1 ~ (len token - 1)]) };
 
         // Access list value by index specification
         } else if (token["["] & (token[len token - 1] == "]")) {
@@ -360,8 +371,8 @@ let parseExpr = fn(source ->
             "-="  => operatorGen `-` |> assignGen,
             "*="  => operatorGen `*` |> assignGen,
             "/="  => operatorGen `/` |> assignGen,
-            "|>"  => @{ "class": #Apply,  "value": [token, hasLhs 2] },
-            _     => @{ "class": #Apply,  "value": [hasLhs 1, token] }
+            "|>"  => @{ "class": #Call,  "value": [token, hasLhs 2] },
+            _     => @{ "class": #Call,  "value": [hasLhs 1, token] }
         }
     } else {
         token
@@ -373,7 +384,8 @@ let parseSig = fn(x ->
     match source {
         "str" => text,
         "num" => number,
-        "list" => list
+        "arr" => list,
+        "fun" => function
     }
 );
 
@@ -454,7 +466,8 @@ let valueShow = fn(isForDebug, x ->
                     match val {
                         text => "str",
                         number => "num",
-                        list => "list"
+                        list => "arr",
+                        function => "fun"
                     }
                 },
                 struct | symbol => "",
@@ -472,7 +485,12 @@ let scope = @{
     ),
     "type": fn(e, x ->
         let [scope, arg] = [e, x];
-        [scope, @{ "class": #Literal, "value": type arg.value }]
+        [scope, @{ "class": #Literal, "value": {
+            match (type arg) {
+                #Literal => type arg.value,
+                #Lambda => function
+            }
+        }}]
     )
 };
 
