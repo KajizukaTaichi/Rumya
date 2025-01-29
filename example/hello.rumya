@@ -5,7 +5,7 @@ let index: num = 0.
 while let item = nameList 's index loop
 begin
     print if { name: greeting, repeat: count } := item
-        then messageGen greeting * count
+        then greeting * count |> messageGen
         else messageGen item.
     index += 1
 end.
