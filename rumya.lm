@@ -370,7 +370,7 @@ let parseExpr = fn(source ->
                             let trimmed = trim i;
                             if ("" != trimmed) {
                                 if { let [key, value] = tokenize [":"] trimmed } {
-                                    result[trimmed] := parseExpr(value);
+                                    result[trim key] := parseExpr(value);
                                 } else {
                                     result[trimmed] := parseExpr(trimmed);
                                 }
