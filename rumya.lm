@@ -469,6 +469,10 @@ let scope = @{
     "input": fn(e, x ->
         let [scope, arg] = [e, x];
         [scope, @{ "class": #Literal, "value":  input arg.value }]
+    ),
+    "type": fn(e, x ->
+        let [scope, arg] = [e, x];
+        [scope, @{ "class": #Literal, "value":  type arg.value }]
     )
 };
 
