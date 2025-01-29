@@ -211,7 +211,7 @@ let parseStmt = fn(source ->
         let token = token - "let" / "=";
         let [name, value] = [trim token[0], join token[1 ~ len(token)] "="];
         if { let [name, annotate] = name / ":" } {
-            @{ "class": #Let, "value": [parseExpr name, parseExpr annotate, parseBlock value] }
+            @{ "class": #Let, "value": [parseExpr name, parseSig trim(annotate), parseBlock value] }
         } else {
             @{ "class": #Let, "value": [parseExpr name, null, parseBlock value] }
         }
