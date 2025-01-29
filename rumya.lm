@@ -363,7 +363,8 @@ let parseSig = fn(x ->
         "str" => text,
         "num" => number,
         "arr" => list,
-        "fun" => function
+        "fun" => function,
+        "sig" => signature
     }
 );
 
@@ -445,7 +446,8 @@ let valueShow = fn(isForDebug, x ->
                         text => "str",
                         number => "num",
                         list => "arr",
-                        function => "fun"
+                        function => "fun",
+                        signature => "sig"
                     }
                 },
                 struct | symbol => "",
