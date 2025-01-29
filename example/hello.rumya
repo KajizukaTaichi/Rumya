@@ -1,13 +1,10 @@
 let messageGen name = "Hello, " + name + "! ".
-let index: num = 0.
 nameList := ["world", { name: "Rumya", repeat: 3 }].
 
+let index: num = 0.
 while let item = nameList 's index loop
 begin
-    if let {
-        name: greeting,
-        repeat: count
-    } = item then
+    if { name: greeting, repeat: count } := item then
     begin
         messageGen name =: greeting.
         print greeting * count
