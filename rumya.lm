@@ -249,7 +249,7 @@ let parseStmt = fn(source ->
                 else fault
             }
         }
-     } else if (token["for"] == (0 ~ 3)) {
+    } else if (token["for"] == (0 ~ 3)) {
         let token = tokenize SPACE (token - "for");
         @{
             "class": #For,
@@ -269,7 +269,7 @@ let parseStmt = fn(source ->
                 else fault
             }
         }
-     } else if (token["while"] == (0 ~ 5)) {
+    } else if (token["while"] == (0 ~ 5)) {
         let token = tokenize SPACE (token - "while");
         @{
             "class": #While,
@@ -284,7 +284,7 @@ let parseStmt = fn(source ->
                 else fault
             }
         }
-     } else if (token["until"] == (0 ~ 5)) {
+    } else if (token["until"] == (0 ~ 5)) {
         let token = tokenize SPACE (token - "until");
         @{
             "class": #Until,
@@ -299,6 +299,8 @@ let parseStmt = fn(source ->
                 else fault
             }
         }
+    } else if (token == "fault") {
+        parseExpr "fault null as text"
     } else {
         parseExpr token
     }
