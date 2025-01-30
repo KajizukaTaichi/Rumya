@@ -1,4 +1,4 @@
-let info = {
+let info as dic = {
     project: "Rumya",
     version: "0.1.0",
     developer: {
