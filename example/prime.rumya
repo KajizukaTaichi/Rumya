@@ -2,16 +2,16 @@ let isPrime n =
 begin
     n > 1.
     if n < 4 then
-        ok
+        okay
     else
         for count in
         2 ~ (n ^ 0.5 + 1) do
             n % count != 0.
-    ok
+    okay
 end.
 
 let i = 0.
-while ok loop
+while okay loop
 begin
     if isPrime i
         then print i.

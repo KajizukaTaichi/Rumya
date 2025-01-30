@@ -564,7 +564,7 @@ let scope = @{
         evalExpr scope (parseBlock code)
     ),
     "_": @{ "class": #Literal, "value": null },
-    "ok": @{ "class": #Literal, "value": 1 },
+    "okay": @{ "class": #Literal, "value": 1 },
     "fault": fn(e, x ->
         let [scope, arg] = [e, x];
         fault arg.value
