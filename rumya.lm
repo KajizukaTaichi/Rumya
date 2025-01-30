@@ -232,7 +232,7 @@ let parseStmt = fn(source ->
     } else if (token["let"] == (0 ~ 3)) {
         let token = token - "let" / "=";
         let [name, value] = [trim token[0], join token[1 ~ len(token)] "="];
-        if { let [name, annotate] = name / ":" } {
+        if { let [name, annotate] = name / "as" } {
             @{ "class": #Let, "value": [parseExpr name, parseSig trim(annotate), parseBlock value] }
         } else {
             @{ "class": #Let, "value": [parseExpr name, null, parseBlock value] }
