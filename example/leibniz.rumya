@@ -4,6 +4,6 @@ let k as num = 0.
 while 1 loop
 begin
     (-1 ^ k) / (2 * k + 1) =+ pi.
-    print pi * 4.
+    print "No.", k, ": π = ", pi * 4.
     k += 1
 end.
