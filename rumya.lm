@@ -395,9 +395,14 @@ let parseExpr = fn(source ->
     if (len tokenList >= 2 & tokenList[len tokenList - 2]) {
         let hasLhs = λx.parseExpr(join tokenList[0 ~ (len tokenList - x)] " ");
         let operatorGen = λx.@{ "class": #Operator, "value": [x, hasLhs 2, token] };
-        let assignGen = λx.@{ "class": #Let,  "value": [hasLhs 2, null, x] };
-        let revOperatorGen = λx.@{ "class": #Operator, "value": [x, token, hasLhs 2] };
-        let revAssignGen = λx.@{ "class": #Let,  "value": [token, null, x] };
+        let assignGen = λx.@{ "class": #Let, "value": [hasLhs 2, null, x] };
+        let revClacAssignGen = λx.@{
+            "class": #Let,
+            "value": [token, null, @{
+                "class": #Operator,
+                "value": [`+`, token, hasLhs 2]
+            }]
+        };
 
         match (trim it) {
             "+"   => operatorGen `+`,
@@ -420,11 +425,15 @@ let parseExpr = fn(source ->
             "-="  => operatorGen `-` |> assignGen,
             "*="  => operatorGen `*` |> assignGen,
             "/="  => operatorGen `/` |> assignGen,
-            "=:"  => revAssignGen token,
-            "=+"  => revOperatorGen `+` |> revAssignGen,
-            "=-"  => revOperatorGen `-` |> revAssignGen,
-            "=*"  => revOperatorGen `*` |> revAssignGen,
-            "=/"  => revOperatorGen `/` |> revAssignGen,
+            "%="  => operatorGen `%` |> assignGen,
+            "^="  => operatorGen `^` |> assignGen,
+            "=:"  => @{ "class": #Let, "value": [token, null, hasLhs 2] },
+            "=+"  => revClacAssignGen `+`,
+            "=-"  => revClacAssignGen `-`,
+            "=*"  => revClacAssignGen `*`,
+            "=/"  => revClacAssignGen `/`,
+            "=%"  => revClacAssignGen `%`,
+            "=^"  => revClacAssignGen `^`,
             "|>"  => @{ "class": #Call,  "value": [token, hasLhs 2] },
             _     => @{ "class": #Call,  "value": [hasLhs 1, token] }
         }
