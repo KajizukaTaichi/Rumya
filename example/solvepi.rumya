@@ -1,0 +1,9 @@
+let leibnizPi n =
+begin
+    let pi = 0.
+    for k in 0 ~ n do
+        (-1 ^ k) / (2 * k + 1) =+ pi.
+    pi * 4
+end.
+
+print leibnizPi 100
