@@ -1,6 +1,6 @@
-let [pi as num, k as num] = [0] * 2.
+let [pi as num, k as num] as arr = [0] * 2.
 
-while 1 loop
+while ok loop
 begin
     (-1 ^ k) / (2 * k + 1) =+ pi.
     print pi * 4.
