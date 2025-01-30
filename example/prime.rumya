@@ -15,7 +15,7 @@ end.
 let i = 0.
 while TRUE loop
 begin
+    if isPrime i
+        then print i.
     i += 1.
-    if isPrime i then
-        print i
 end.
