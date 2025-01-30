@@ -235,14 +235,13 @@ let parseStmt = fn(source ->
         if {
             let token = name / "as";
             let [name, annotate] = [
-                join token[0 ~ (len token - 1)] "as",
-                token[len token - 1]
+                trim (join token[0 ~ (len token - 1)] "as"),
+                trim token[len token - 1]
             ]
-        } {
-            @{ "class": #Let, "value": [parseExpr name, parseSig trim(annotate), parseBlock value] }
-        } else {
-            @{ "class": #Let, "value": [parseExpr name, null, parseBlock value] }
         }
+            @{ "class": #Let, "value": [parseExpr name, parseSig annotate, parseBlock value] }
+        else
+            @{ "class": #Let, "value": [parseExpr name, null, parseBlock value] }
     } else if (token["if"] == (0 ~ 2)) {
         let token = tokenize SPACE (token - "if");
         @{
