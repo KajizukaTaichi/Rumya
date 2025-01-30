@@ -1,19 +1,16 @@
 let isPrime n =
 begin
-    n > 1.
-    if n < 4 then
-        okay
+    if n < 2 then fault
+    else if n < 4 then okay
     else
-        for count in
-        2 ~ (n ^ 0.5 + 1) do
-            n % count != 0.
+    for count in 2 ~ (n ^ 0.5 + 1) do
+        if n % count == 0
+            then fault.
     okay
 end.
 
-let i = 0.
-while okay loop
-begin
-    if isPrime i
-        then print i.
-    i += 1.
-end.
+print "Prime App".
+while let i = input ">> " as num loop
+print if isPrime i
+    then "YES! prime number"
+    else "NO, diviable number"
