@@ -10,9 +10,6 @@ begin
 end.
 
 print "Primality checker".
-print "Copyrights 2025 梶塚太智".
-print "Built on Rumya technology".
-
 while let i = input ">> " as num loop
 print if isPrime i
     then "YES! prime number"
