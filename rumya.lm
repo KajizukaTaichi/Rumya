@@ -570,7 +570,6 @@ if cmdLineArgs[0] {
     while 1 {
         let prompt = just "right" line 3 "0";
         let code = input f"[{prompt}]> ";
-        print parseBlock code;
         if evalExpr(scope, parseBlock code) {
             let [scope, result] = it;
             if ("" != (valueShow 1 result)) {
