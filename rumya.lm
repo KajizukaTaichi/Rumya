@@ -400,7 +400,7 @@ let parseExpr = fn(source ->
             "class": #Let,
             "value": [token, null, @{
                 "class": #Operator,
-                "value": [`+`, token, hasLhs 2]
+                "value": [x, token, hasLhs 2]
             }]
         };
 
