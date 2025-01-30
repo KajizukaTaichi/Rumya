@@ -1,15 +1,16 @@
-let messageGen name = "Hello, " + name + "! ".
-nameList := [
-    { name: "world" },
-    { name: "Rumya", repeat: 3 }
-].
+infoRumya := {
+    paradigm: ["Functional", "Procedural"],
+    influenced: ["OCaml", "Icon", "Pascal", "Rust", "Ruby"],
+    developer: { fullName: "梶塚太智", handle: "Kazy" }
+};
+let keys as arr =
 
 let index as num = 0.
 while let elm = nameList 's index loop
 begin
     if let { name, repeat } = elm then
         print messageGen name * repeat
-    else if elm =: { name } then
+    else if let { name } elm = then
         print name |> messageGen.
     index += 1
 end.
