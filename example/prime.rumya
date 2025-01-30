@@ -20,4 +20,4 @@ for i in 0 ~ MAX do
         print i.
         count += 1
     end.
-print "discovered ", count
+print "Discovered ", count
