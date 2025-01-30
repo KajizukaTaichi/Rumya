@@ -1,16 +1,27 @@
-infoRumya := {
+let info = {
+    project: "Rumya",
+    version: "0.1.0",
+    developer: {
+        fullName: "梶塚太智",
+        handle: "Kazy"
+    },
     paradigm: ["Functional", "Procedural"],
-    influenced: ["OCaml", "Icon", "Pascal", "Rust", "Ruby"],
-    developer: { fullName: "梶塚太智", handle: "Kazy" }
+    influenced: ["OCaml", "Rust", "Icon", "Pascal", "Ruby"],
 };
-let keys as arr =
 
-let index as num = 0.
-while let elm = nameList 's index loop
+for [key, value] in info do
 begin
-    if let { name, repeat } = elm then
-        print messageGen name * repeat
-    else if let { name } elm = then
-        print name |> messageGen.
-    index += 1
+    print key, ": ",
+    begin
+        if let { fullName, handle } = value then
+            fullName + " (" + handle + ")"
+        else if type value == arr then
+        begin
+            let result = "".
+            for i in value do
+                i + " " =+ result.
+            result
+        end
+        else value
+    end
 end.
