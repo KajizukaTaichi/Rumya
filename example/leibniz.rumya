@@ -1,5 +1,4 @@
-let pi as num = 0.
-let k as num = 0.
+let [pi as num, k as num] = [0] * 2.
 
 while 1 loop
 begin
