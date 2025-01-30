@@ -18,18 +18,12 @@ let evalExpr = fn(e, x ->
             let [name, val] = ast.value;
             if (type name == #Call) {
                 let [name, args] = name.value;
-                let val = @{
-                    "class": #Lambda,
-                    "value": [args.value, val]
-                };
+                let val = @{ "class": #Lambda, "value": [args.value, val] };
                 while (type name == #Call) {
                     let [name, args] = name.value;
                     let val = @{ "class": #Lambda, "value": [args.value, val] };
                 };
-                evalExpr scope @{
-                    "class": #Let,
-                    "value": [name, val]
-                }
+                evalExpr scope @{ "class": #Let, "value": [name, val] }
             } else {
                 let [scope, val] = evalExpr scope val;
                 if (type name == #Symbol) {
@@ -49,20 +43,28 @@ let evalExpr = fn(e, x ->
                             @{ "class": #Let, "value": [name, val.value[key]] }
                     };
                     [scope, val]
-                } else if (type name == #Operator & (name.value[0] == `::`)) {
-                    let accessor = name.value[1];
-                    let [scope, obj] = evalExpr scope accessor;
-                    let [scope, key] = evalExpr scope name.value[2];
-                    obj.value[key.value] := {
-                        if (type obj.value != struct) {
-                            if ([text, list] :: [type key.value]) { val.value } else { val }
-                        } else {
-                            val
+                } else if (type name == #Operator) {
+                    if (name.value[0] == `::`) {
+                        let accessor = name.value[1];
+                        let [scope, obj] = evalExpr scope accessor;
+                        let [scope, key] = evalExpr scope name.value[2];
+                        obj.value[key.value] := {
+                            if (type obj.value != struct) {
+                                if ([text, list] :: [type key.value])
+                                    { val.value } else { val }
+                            } else {
+                                val
+                            }
+                        };
+                        evalExpr scope @{ "class": #Let, "value": [accessor, obj] }
+                    } else if (name.value[0] == `as`) {
+                        let [scope, annotate] = evalExpr scope name.value[2];
+                        let [scope, typeOfVal] = evalExpr scope
+                            @{ "class": #Call, "value": [scope["type"], val] };
+                        if (typeOfVal == annotate) {
+                            evalExpr scope @{ "class": #Let, "value": [name.value[1], val] }
                         }
-                    };
-                    evalExpr scope @{
-                        "class": #Let,
-                        "value": [accessor, obj]
+                        else fault
                     }
                 } else {
                     let [scope, name] = evalExpr scope name;
