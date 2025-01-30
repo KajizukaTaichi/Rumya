@@ -3,7 +3,7 @@ load std;
 const SPACE: list = [" ", "　", "\n", "\t", "\r"];
 const ERRMSG: text = "the program is not able to parse or evaluate. check out is that correct";
 const RESERVED: list =
-    ["print", "let", "if", "then", "else", "for", "in", "do", "while", "until", "loop", "begin", "end"];
+    ["print", "let", "if", "then", "else", "for", "in", "do", "while", "until", "loop"];
 
 let evalExpr = fn(e, x ->
     let [scope, ast] = [e, x];
