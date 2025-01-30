@@ -4,10 +4,10 @@ nameList := [
     { name: "Rumya", repeat: 3 }
 ].
 
-let index: num = 0.
+let index as num = 0.
 while let elm = nameList 's index loop
 begin
-    if elm =: { name, repeat } then
+    if let { name, repeat } = elm then
         print messageGen name * repeat
     else if elm =: { name } then
         print name |> messageGen.
