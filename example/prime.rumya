@@ -1,5 +1,4 @@
 TRUE as num := 1.
-MAX as num := 100.
 
 let isPrime n =
 begin
@@ -13,11 +12,10 @@ begin
     TRUE
 end.
 
-let count = 0.
-for i in 0 ~ MAX do
+let i = 0.
+while TRUE loop
+begin
+    i += 1.
     if isPrime i then
-    begin
-        print i.
-        count += 1
-    end.
-print "Discovered ", count
+        print i
+end.
