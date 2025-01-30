@@ -559,6 +559,11 @@ let scope = @{
                 _ => type arg
             }
         }}]
+    ),
+    "load": fn(e, x ->
+        let [scope, arg] = [e, x];
+        let code = readFile arg.value;
+        evalExpr scope (parseBlock code)
     )
 };
 
