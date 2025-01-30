@@ -2,8 +2,6 @@ let [pi as num, k as num] as arr = [0] * 2.
 
 while ok loop
 begin
-    print
-        (-1 ^ k) / (2 * k + 1)
-        =+ pi * 4.
+    print (-1 ^ k) / (2 * k + 1) =+ pi * 4.
     k += 1
 end.
