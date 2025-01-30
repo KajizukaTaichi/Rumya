@@ -120,9 +120,7 @@ let evalExpr = fn(e, x ->
             };
             [scope, result]
         },
-        #Symbol => {
-            [scope, scope[ast.value]]
-        },
+        #Symbol =>  evalExpr scope scope[ast.value],
         #Array => {
             let result = [];
             for i in ast.value {
@@ -564,6 +562,12 @@ let scope = @{
         let [scope, arg] = [e, x];
         let code = readFile arg.value;
         evalExpr scope (parseBlock code)
+    ),
+    "_": @{ "class": #Literal, "value": null },
+    "success": @{ "class": #Literal, "value": 1 },
+    "fault": fn(e, x ->
+        let [scope, arg] = [e, x];
+        fault arg.value
     )
 };
 
