@@ -1,7 +1,9 @@
 load std;
 
 const SPACE: list = [" ", "　", "\n", "\t", "\r"];
-const ERRMSG: text =  "the program is not able to parse or evaluate. check out is that correct";
+const ERRMSG: text = "the program is not able to parse or evaluate. check out is that correct";
+const RESERVED: list =
+    ["print", "let", "if", "then", "else", "for", "in", "do", "while", "until", "loop", "begin", "end"];
 
 let evalExpr = fn(e, x ->
     let [scope, ast] = [e, x];
@@ -378,9 +380,10 @@ let parseExpr = fn(source ->
             @{ "class": #Operator, "value": [`::`, parseExpr token, parseExpr accessor] };
 
         // Symbol that used in variable reference
-        } else {
+        } else if !(RESERVED :: [token]) {
            @{ "class": #Symbol, "value": token }
         }
+        else fault
     };
     if (len tokenList >= 2 & tokenList[len tokenList - 2]) {
         let hasLhs = λx.parseExpr(join tokenList[0 ~ (len tokenList - x)] " ");
