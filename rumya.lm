@@ -396,7 +396,9 @@ let parseExpr = fn(source ->
         let hasLhs = λx.parseExpr(join tokenList[0 ~ (len tokenList - x)] " ");
         let operatorGen = λx.@{ "class": #Operator, "value": [x, hasLhs 2, token] };
         let assignGen = λx.@{ "class": #Let,  "value": [hasLhs 2, null, x] };
-        let reversedAssignGen = λx.@{ "class": #Let,  "value": [x, null, hasLhs 2] };
+        let revOperatorGen = λx.@{ "class": #Operator, "value": [x, token, hasLhs 2] };
+        let revAssignGen = λx.@{ "class": #Let,  "value": [token, null, x] };
+
         match (trim it) {
             "+"   => operatorGen `+`,
             "-"   => operatorGen `-`,
@@ -418,11 +420,11 @@ let parseExpr = fn(source ->
             "-="  => operatorGen `-` |> assignGen,
             "*="  => operatorGen `*` |> assignGen,
             "/="  => operatorGen `/` |> assignGen,
-            "=:"  => reversedAssignGen token,
-            "=+"  => operatorGen `+` |> reversedAssignGen,
-            "=-"  => operatorGen `-` |> reversedAssignGen,
-            "=*"  => operatorGen `*` |> reversedAssignGen,
-            "=/"  => operatorGen `/` |> reversedAssignGen,
+            "=:"  => revAssignGen token,
+            "=+"  => revOperatorGen `+` |> revAssignGen,
+            "=-"  => revOperatorGen `-` |> revAssignGen,
+            "=*"  => revOperatorGen `*` |> revAssignGen,
+            "=/"  => revOperatorGen `/` |> revAssignGen,
             "|>"  => @{ "class": #Call,  "value": [token, hasLhs 2] },
             _     => @{ "class": #Call,  "value": [hasLhs 1, token] }
         }
@@ -568,6 +570,7 @@ if cmdLineArgs[0] {
     while 1 {
         let prompt = just "right" line 3 "0";
         let code = input f"[{prompt}]> ";
+        print parseBlock code;
         if evalExpr(scope, parseBlock code) {
             let [scope, result] = it;
             if ("" != (valueShow 1 result)) {
