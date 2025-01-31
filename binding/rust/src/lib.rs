@@ -1,6 +1,6 @@
 //! # Rumya
 //! Rumya programming language's binding for Rust.
-//! You can evaluate Rumya program embedded in Rust.
+//! You can utilize Rumya program embedded in your project.
 //! ```
 //! let rumya = Rumya::new().set_rumya(PATH);
 //! let result = rumya.eval::<i32>("let x = 0. for i in 1 ~ 10 do x += i. x");
@@ -43,7 +43,7 @@ impl Rumya {
     }
 
     /// # Rumya setter
-    /// this methods sets interpreter path of Rumya
+    /// This methods sets interpreter path of Rumya
     pub fn set_rumya(&self, path: &str) -> Self {
         let path = Path::new(path);
         Self {
@@ -53,7 +53,7 @@ impl Rumya {
     }
 
     /// # Lamuta setter
-    /// this methods sets interpreter path of Lamuta
+    /// This methods sets interpreter path of Lamuta
     pub fn set_lamuta(&self, path: &str) -> Self {
         let path = Path::new(path);
         Self {
@@ -63,7 +63,8 @@ impl Rumya {
     }
 
     /// # Evaluater
-    /// It create file `Rumya-binding.temp.lm` for evaluate temporary.
+    /// This methods evaluate provided Rumya code and convert result value to type you specified.
+    /// It temporary creates file `Rumya-binding.temp.lm` for evaluate at runtime.
     pub fn eval<T: Sized + FromStr>(&self, code: &str) -> Option<T> {
         const TEMP_FILE_NAME: &str = "Rumya-binding.temp.lm";
         let mut temp_file = some!(File::create(TEMP_FILE_NAME))?;
