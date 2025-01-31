@@ -23,12 +23,26 @@ pub struct Rumya {
 }
 
 impl Rumya {
-    pub fn new(rumya_path: &str, lamuta_path: Option<&str>) -> Self {
-        let rumya_path = Path::new(rumya_path);
-        let lamuta_path = Path::new(lamuta_path.unwrap_or("lamuta"));
+    pub fn new() -> Self {
         Self {
-            rumya_path: rumya_path.display().to_string(),
-            lamuta_path: lamuta_path.display().to_string(),
+            rumya_path: "rumya.lm".to_string(),
+            lamuta_path: "lamuta".to_string(),
+        }
+    }
+
+    pub fn set_rumya(&self, path: &str) -> Self {
+        let path = Path::new(path);
+        Self {
+            rumya_path: path.display().to_string(),
+            ..self.clone()
+        }
+    }
+
+    pub fn set_lamuta(&self, path: &str) -> Self {
+        let path = Path::new(path);
+        Self {
+            lamuta_path: path.display().to_string(),
+            ..self.clone()
         }
     }
 
@@ -60,7 +74,7 @@ mod tests {
     fn it_works() {
         // This path is only my environment, change your Rumya path when you test
         const PATH: &str = "/Users/kajizukataichi/Desktop/repositories/Rumya/rumya.lm";
-        let rumya = Rumya::new(PATH, None);
+        let rumya = Rumya::new().set_rumya(PATH);
         let result = rumya.eval::<i32>("let x = 0. for i in 1 ~ 10 do x += i. x");
         assert_eq!(result, Some(45));
     }
