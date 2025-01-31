@@ -34,7 +34,7 @@ pub struct Rumya {
 
 impl Rumya {
     /// # Constructer
-    /// Rumya's path would setted by `rumya.lm`, Lamuta's one is `lamuta` in default.
+    /// Rumya's interpreter path would setted by `rumya.lm`, Lamuta's one is `lamuta` in default.
     pub fn new() -> Self {
         Self {
             rumya_path: "rumya.lm".to_string(),
@@ -42,6 +42,8 @@ impl Rumya {
         }
     }
 
+    /// # Rumya setter
+    /// this methods sets interpreter path of Rumya
     pub fn set_rumya(&self, path: &str) -> Self {
         let path = Path::new(path);
         Self {
@@ -50,6 +52,8 @@ impl Rumya {
         }
     }
 
+    /// # Lamuta setter
+    /// this methods sets interpreter path of Lamuta
     pub fn set_lamuta(&self, path: &str) -> Self {
         let path = Path::new(path);
         Self {
@@ -58,6 +62,8 @@ impl Rumya {
         }
     }
 
+    /// # Evaluater
+    /// It create file `Rumya-binding.temp.lm` for evaluate temporary.
     pub fn eval<T: Sized + FromStr>(&self, code: &str) -> Option<T> {
         const TEMP_FILE_NAME: &str = "Rumya-binding.temp.lm";
         let mut temp_file = some!(File::create(TEMP_FILE_NAME))?;
