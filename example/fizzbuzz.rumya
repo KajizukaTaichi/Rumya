@@ -6,7 +6,7 @@ begin
     else n
 end.
 
-for i in 1 ~ 101 do
+for i as num in 1 ~ 101 do
 begin
     let msg = fizzbuzz i.
     print msg
