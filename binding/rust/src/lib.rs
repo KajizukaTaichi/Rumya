@@ -1,3 +1,12 @@
+//! # Rumya
+//! Rumya programming language's binding for Rust.
+//! You can evaluate Rumya program embedded in Rust.
+//! ## Example
+//! ```
+//! let rumya = Rumya::new().set_rumya(PATH);
+//! let result = rumya.eval::<i32>("let x = 0. for i in 1 ~ 10 do x += i. x");
+//! assert_eq!(result, Some(45));
+//! ```
 use std::io::Write;
 use std::process::Command;
 use std::str::FromStr;
@@ -16,6 +25,8 @@ macro_rules! some {
     };
 }
 
+// Environment that manages interpreter paths of Rumya and her base technology Lamuta.
+// And parse and evaluate Rumya program from source code string using eval method.
 #[derive(Clone)]
 pub struct Rumya {
     rumya_path: String,
