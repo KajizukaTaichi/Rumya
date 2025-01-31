@@ -1,6 +1,6 @@
 [package]
 name = "rumya-binding"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["梶塚太智 <kajizukataichi@outlook.jp>"]
 description = "Rumya programming language's binding for Rust"
