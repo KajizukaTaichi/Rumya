@@ -1,4 +1,4 @@
-# Rumya
+# Rumya Binding
 Rumya programming language's binding for Rust.
 
 You can utilize Rumya program embedded in your project.
